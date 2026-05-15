@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume ATS Score Analyzer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a class="nav-brand" href="#home" aria-label="Resume ATS Analyzer home">
+        <span class="nav-logo" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+        <span>ATS Analyzer</span>
+      </a>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="nav-links" id="navLinks">
+        <a href="#analyzer">Analyzer</a>
+        <a href="#results">Results</a>
+        <a href="#tips">ATS Tips</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+
+    <main class="app-shell">
+      <section class="workspace" id="home">
+        <header class="topbar">
+          <div class="brand">
+            <div class="brand-mark" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div>
+              <p class="eyebrow">Resume ATS Analyzer</p>
+              <h1>Score a resume against a job description.</h1>
+            </div>
+          </div>
+          <button class="ghost-button" id="loadSample" type="button">Load sample</button>
+        </header>
+
+        <section class="input-grid" id="analyzer" aria-label="Resume analyzer inputs">
+          <article class="panel input-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Step 1</p>
+                <h2>Resume text</h2>
+              </div>
+              <label class="file-button" for="resumeFile">Upload resume</label>
+              <input id="resumeFile" type="file" accept=".txt,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+            </div>
+            <textarea id="resumeText" spellcheck="true" placeholder="Paste your resume text here. For best ATS results, include your summary, skills, work experience, education, projects, certifications, and achievements."></textarea>
+          </article>
+
+          <article class="panel input-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Step 2</p>
+                <h2>Target job description</h2>
+              </div>
+              <select id="rolePreset" aria-label="Role preset">
+                <option value="">Role preset</option>
+                <option value="frontend">Frontend Developer</option>
+                <option value="backend">Backend Developer</option>
+                <option value="fullstack">Full Stack Developer</option>
+                <option value="data">Data Analyst</option>
+                <option value="datascience">Data Scientist</option>
+                <option value="marketing">Digital Marketer</option>
+                <option value="product">Product Manager</option>
+                <option value="uiux">UI/UX Designer</option>
+                <option value="devops">DevOps Engineer</option>
+                <option value="cybersecurity">Cybersecurity Analyst</option>
+                <option value="hr">HR Recruiter</option>
+                <option value="finance">Financial Analyst</option>
+                <option value="sales">Sales Executive</option>
+              </select>
+            </div>
+            <textarea id="jobText" spellcheck="true" placeholder="Paste the job description here. The analyzer compares resume keywords, tools, skills, and responsibilities against this text."></textarea>
+          </article>
+        </section>
+
+        <div class="action-row">
+          <button class="primary-button" id="analyzeButton" type="button">
+            <span class="button-icon" aria-hidden="true">✓</span>
+            Analyze ATS score
+          </button>
+          <button class="secondary-button" id="downloadReport" type="button" disabled>
+            <span class="button-icon" aria-hidden="true">↓</span>
+            Download ATS Report
+          </button>
+          <p id="statusText" class="status-text">Ready to analyze when both text fields have content.</p>
+        </div>
+
+        <section class="results-grid" id="results" aria-label="ATS score results">
+          <article class="score-panel">
+            <div class="score-visual" aria-label="ATS score">
+              <svg viewBox="0 0 160 160" role="img" aria-labelledby="scoreTitle">
+                <title id="scoreTitle">ATS score gauge</title>
+                <circle class="gauge-track" cx="80" cy="80" r="68"></circle>
+                <circle class="gauge-fill" id="scoreGauge" cx="80" cy="80" r="68"></circle>
+              </svg>
+              <div class="score-number">
+                <strong id="scoreValue">0</strong>
+                <span>/100</span>
+              </div>
+            </div>
+            <div class="score-copy">
+              <p class="eyebrow">Overall ATS score</p>
+              <h2 id="scoreLabel">Awaiting analysis</h2>
+              <p id="scoreSummary">Paste a resume and a job description, then run the analyzer to see how well the resume fits.</p>
+            </div>
+          </article>
+
+          <article class="panel breakdown-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Score drivers</p>
+                <h2>Breakdown</h2>
+              </div>
+            </div>
+            <div class="metrics" id="metrics"></div>
+          </article>
+        </section>
+
+        <section class="insights-grid" id="insights">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Fix first</p>
+                <h2>Suggestions to improve</h2>
+              </div>
+            </div>
+            <ul class="suggestion-list" id="suggestions"></ul>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Keyword fit</p>
+                <h2>Matched and missing terms</h2>
+              </div>
+            </div>
+            <div class="keyword-columns">
+              <div>
+                <h3>Matched</h3>
+                <div class="chip-list" id="matchedKeywords"></div>
+              </div>
+              <div>
+                <h3>Missing</h3>
+                <div class="chip-list" id="missingKeywords"></div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="tips-section" id="tips" aria-label="ATS resume tips">
+          <div>
+            <p class="eyebrow">ATS tips</p>
+            <h2>Make your resume easier for hiring systems to read.</h2>
+          </div>
+          <div class="tips-grid">
+            <article class="tip-card">
+              <strong>Use exact role keywords</strong>
+              <span>Mirror important tools, skills, and job titles from the description when they truthfully match your experience.</span>
+            </article>
+            <article class="tip-card">
+              <strong>Keep formatting simple</strong>
+              <span>Use clear headings and avoid tables, photos, columns, icons, and text boxes in the ATS version.</span>
+            </article>
+            <article class="tip-card">
+              <strong>Prove impact with numbers</strong>
+              <span>Add metrics such as users, revenue, speed, cost savings, accuracy, volume, or percentage improvement.</span>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="contact">
+      <div class="footer-brand">
+        <span class="footer-logo" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+        <div>
+          <strong>Resume ATS Analyzer</strong>
+          <p>Developed by Shivam Kumar</p>
+        </div>
+      </div>
+      <div class="footer-links" aria-label="Footer navigation">
+        <a href="#analyzer">Analyzer</a>
+        <a href="#results">Results</a>
+        <a href="#tips">ATS Tips</a>
+      </div>
+      <p class="copyright">Copyright © 2026 Shivam Kumar. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
